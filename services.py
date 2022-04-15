@@ -20,7 +20,7 @@ model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-italian"
 
 
 def get_transcription(rec):
-    audio_input, rate = sf.read(rec)
+    audio_input, rate = librosa.load(rec)
     audio_input = librosa.resample(audio_input.T, rate, 16000)
     audio_input = tokenizer(rec, return_tensors="pt", padding=True, truncation=True).input_values.unsqueeze(0) #added unsqueeze(0) for recording from microphone here
     logits = model(audio_input[0]).logits

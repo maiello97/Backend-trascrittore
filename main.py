@@ -9,6 +9,10 @@ from services import get_transcription
 import shutil
 import moviepy.editor as moviepy
 
+import struct
+
+
+
 
 app = FastAPI()
 
@@ -34,16 +38,16 @@ def read_item(item_id: int, q: Optional[str] = None):
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
 
-    """content = file.file.read()"""
-    
-    
-    with wave.open(file.filename, 'wb') as audio:
+    content = file.file.read()
+
+
+    """with wave.open(file.filename, 'wb') as audio:
             audio.setnchannels(1)
             audio.setsampwidth(2)
             audio.setframerate(8000)
-            audio.writeframesraw(file.file)
+            audio.writeframesraw(content)"""
             
-    res = get_transcription(audio)
+    res = get_transcription(content)
 
         
     
