@@ -2,14 +2,14 @@ from io import BytesIO
 from typing import Optional
 import wave
 
-from fastapi import FastAPI, File, UploadFile,HTTPException
+from fastapi import FastAPI, File, UploadFile,Form
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
 from services import get_transcription
-import shutil
 import moviepy.editor as moviepy
+import scipy.io.wavfile
 
-import struct
+
 
 
 
@@ -36,27 +36,29 @@ def read_item(item_id: int, q: Optional[str] = None):
     return {"item_id": item_id, "q": q}
 
 @app.post("/uploadfile")
-async def create_upload_file(file: UploadFile = File(...)):
+async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...)):
 
-    content = file.file.read()
-
-
-    """with wave.open(file.filename, 'wb') as audio:
-            audio.setnchannels(1)
-            audio.setsampwidth(2)
-            audio.setframerate(8000)
-            audio.writeframesraw(content)"""
-            
-    res = get_transcription(content)
-
-        
     
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT'
-        },
-        'body': res
-    }
+
+    """res = get_transcription(url)"""    
+
+
+    nchannels = 2
+    sampwidth = 2
+    framerate = 28000
+    nframes = 1600
+ 
+
+ 
+    audio = wave.open("Temp/output.wav", 'wb')
+    audio.setnchannels(nchannels)
+    audio.setsampwidth(sampwidth)
+    audio.setframerate(framerate)
+    audio.setnframes(nframes)
+
+    
+    audio.writeframes(file.file.read())
+             
+    res = get_transcription()
+
+    return res
