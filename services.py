@@ -1,9 +1,6 @@
-from msilib.schema import Binary
-import fastapi as fastapi
 import torch
 import librosa
-import numpy as np
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor, Wav2Vec2Tokenizer
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Tokenizer
 
 from transformers.tokenization_utils_base import BatchEncoding
 

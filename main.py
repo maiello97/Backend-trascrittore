@@ -1,13 +1,9 @@
-from io import BytesIO
 from typing import Optional
 import wave
 
-from fastapi import FastAPI, File, UploadFile,Form
+from fastapi import FastAPI, UploadFile,Form
 from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware import Middleware
 from services import get_transcription
-import moviepy.editor as moviepy
-import scipy.io.wavfile
 
 
 
