@@ -20,33 +20,3 @@ def get_transcription():
     transcription = tokenizer.batch_decode(predicted_ids)[0]
     return transcription
 
-
-"""MODEL_ID = "jonatasgrosman/wav2vec2-large-xlsr-53-italian"
-
-processor = Wav2Vec2Processor.from_pretrained(MODEL_ID)
-
-model = Wav2Vec2ForCTC.from_pretrained(MODEL_ID)
-
-
-def get_transcription():
-    # load audio
-
-    audio_input, _ = librosa.load("Temp/output.wav")
-    
-    audio_input = librosa.resample(audio_input.T, _, 16000)
-
-
-    # transcribe
-
-    inputs = processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
-
-    with torch.no_grad():
-
-        logits = model(inputs.input_values, attention_mask=inputs.attention_mask).logits
-
-    predicted_ids = torch.argmax(logits, dim=-1)
-
-    transcription = processor.batch_decode(predicted_ids)
-
-    return transcription[0].lower()
-"""

@@ -36,7 +36,6 @@ async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...))
 
     
 
-    """res = get_transcription(url)"""    
 
 
     nchannels = 2
