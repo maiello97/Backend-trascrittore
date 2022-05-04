@@ -1,5 +1,6 @@
 from http.client import HTTPException
-from typing import Optional
+from typing import List, Optional
+from urllib import response
 import wave
 
 from fastapi import FastAPI, UploadFile,Form, Depends
@@ -82,3 +83,8 @@ async def create_user(user:schemas.CreateLogin, db:Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Utente già esistente")
     user = await createuser(user, db)
     return user
+
+@app.get("/users/all", response_model=List[schemas.User])
+async def getAllUsers(db:Session= Depends(get_db)):
+    response = db.query(models.User).all()
+    return response
