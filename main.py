@@ -1,3 +1,4 @@
+from datetime import date
 from http.client import HTTPException
 from typing import List, Optional
 from urllib import response
@@ -6,12 +7,14 @@ import wave
 from fastapi import FastAPI, UploadFile,Form, Depends
 from grpc import services
 from starlette.middleware.cors import CORSMiddleware
-from services import get_transcription, auth_user, createuser, get_user_by_email
+from services import get_transcription, auth_user, createuser, get_user_by_email, addTrascription
 
 import fastapi.security as security
 from db import SessionLocal, engine 
 from sqlalchemy.orm import Session
 import db as database, models, schemas
+
+import os.path
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -46,7 +49,7 @@ def read_item(item_id: int, q: Optional[str] = None):
     return {"item_id": item_id, "q": q}
 
 @app.post("/uploadfile")
-async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...)):
+async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...), state:str = Form(...), db:Session=Depends(get_db)):
 
     nchannels = 2
     sampwidth = 2
@@ -63,6 +66,8 @@ async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...))
              
     res = get_transcription()
 
+    if state == "false" :
+        await addTrascription(file.filename, res, date.today(), db)
     return res
 
 

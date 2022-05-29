@@ -1,3 +1,4 @@
+from datetime import date
 from requests import session
 import torch
 import librosa
@@ -28,7 +29,7 @@ def get_transcription():
     audio_input = librosa.resample(audio_input.T, rate, 16000)
     audio_input = tokenizer(audio_input, return_tensors="pt", padding=True).input_values.unsqueeze(0) #added unsqueeze(0) for recording from microphone here
     logits = model(audio_input[0]).logits
-    predicted_ids = torch.argmax(logits, dim=-1)
+    predicted_ids = torch.argmax(input = logits, dim=-1)
     transcription = tokenizer.batch_decode(predicted_ids)[0]
     return transcription
 
@@ -52,3 +53,9 @@ async def createuser(user: schemas.CreateLogin, db:orm.Session):
     db.commit()
     db.refresh(user_obj)
     return user_obj
+
+async def addTrascription(file:str, trascription:str, date:date, db:orm.Session):
+    trascription_obj = models.Trascrizione(audio = file, trascrizione = trascription, data = date)
+    db.add(trascription_obj)
+    db.commit()
+    db.refresh(trascription_obj)
