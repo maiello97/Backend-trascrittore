@@ -1,4 +1,5 @@
-from datetime import date
+from ast import For
+from datetime import date, datetime
 from http.client import HTTPException
 from typing import List, Optional
 from urllib import response
@@ -15,6 +16,10 @@ from sqlalchemy.orm import Session
 import db as database, models, schemas
 
 import os.path
+
+from datetime import date
+import time
+
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -49,14 +54,16 @@ def read_item(item_id: int, q: Optional[str] = None):
     return {"item_id": item_id, "q": q}
 
 @app.post("/uploadfile")
-async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...), state:str = Form(...), db:Session=Depends(get_db)):
+async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...), data:str = Form(...), state:str = Form(...), db:Session=Depends(get_db)):
 
     nchannels = 2
     sampwidth = 2
     framerate = 28000
     nframes = 1600
   
-    audio = wave.open("Temp/output.wav", 'wb')
+    name = date.today().strftime("%d-%m-%Y")+"-"+time.strftime("%H_%M_%S")
+
+    audio = wave.open("Temp/"+name+".wav", 'wb')
     audio.setnchannels(nchannels)
     audio.setsampwidth(sampwidth)
     audio.setframerate(framerate)
@@ -64,10 +71,10 @@ async def create_upload_file(file: UploadFile = Form(...), url: str = Form(...),
     
     audio.writeframes(file.file.read())
              
-    res = get_transcription()
+    res = get_transcription(name)
 
     if state == "false" :
-        await addTrascription(file.filename, res, date.today(), db)
+        await addTrascription(file.filename, res, data, db)
     return res
 
 

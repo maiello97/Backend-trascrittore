@@ -24,8 +24,8 @@ def get_db():
         db.close()
 
 
-def get_transcription():
-    audio_input, rate = librosa.load("Temp/output.wav")
+def get_transcription(filename:str):
+    audio_input, rate = librosa.load("Temp/"+filename+".wav")
     audio_input = librosa.resample(audio_input.T, rate, 16000)
     audio_input = tokenizer(audio_input, return_tensors="pt", padding=True).input_values.unsqueeze(0) #added unsqueeze(0) for recording from microphone here
     logits = model(audio_input[0]).logits
@@ -54,8 +54,16 @@ async def createuser(user: schemas.CreateLogin, db:orm.Session):
     db.refresh(user_obj)
     return user_obj
 
-async def addTrascription(file:str, trascription:str, date:date, db:orm.Session):
-    trascription_obj = models.Trascrizione(audio = file, trascrizione = trascription, data = date)
+async def addTrascription(file:str, trascription:str, date:str, db:orm.Session):
+    trascription_obj = models.Trascrizione(trascrizione = trascription, data = date)
     db.add(trascription_obj)
     db.commit()
     db.refresh(trascription_obj)
+
+    trascription = db.query(models.Trascrizione.id).filter(models.Trascrizione.data == date).one()
+    print(trascription[0])
+    audio_obj = models.Audio(titolo = file, trascrizione = trascription[0])
+
+    db.add(audio_obj)
+    db.commit()
+    db.refresh(audio_obj)

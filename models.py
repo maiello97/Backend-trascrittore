@@ -17,6 +17,11 @@ class User(Base):
 class Trascrizione(Base): 
     __tablename__ = "Trascrizione"
     id = Column(Integer, primary_key=True, index=True, unique=True)
-    audio = Column(String)
     trascrizione = Column(String)
     data = Column(String)
+
+class Audio(Base):
+    __tablename__="Audio"
+    id_audio = Column(Integer, primary_key=True, index=True, unique=True)
+    titolo = Column(String)
+    trascrizione = Column(Integer)

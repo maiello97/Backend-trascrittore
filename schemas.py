@@ -16,7 +16,6 @@ class CreateLogin(BaseModel):
 
 class Trascrizione(BaseModel): 
     id:int
-    audio:str
     trascrizione:str
     data:str
 
@@ -24,6 +23,17 @@ class Trascrizione(BaseModel):
         orm_mode=True
 
 class CreateTrascrizione(BaseModel): 
-    audio:str
     trascrizione:str
     data:str
+
+class Audio(BaseModel):
+    id_audio:int
+    titolo:str
+    id_trascrizione:int
+
+    class Config:
+        orm_mode=True
+
+class CreateAudio(BaseModel): 
+    titolo:str
+    id_trascrizione:str
